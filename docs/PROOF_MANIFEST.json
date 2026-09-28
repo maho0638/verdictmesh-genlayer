@@ -1,0 +1,15 @@
+{
+  "schema": "verdictmesh-proof-v1",
+  "status": "DEVELOPMENT_ONLY",
+  "direct_tests": null,
+  "lint": null,
+  "canonical_ci_run": null,
+  "studionet": {
+    "canonical_run": null,
+    "contract": null,
+    "transactions": null,
+    "result": null,
+    "source_sha256": null
+  },
+  "submission_ready": false
+}

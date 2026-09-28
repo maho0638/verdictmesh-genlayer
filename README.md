@@ -1,86 +1,64 @@
-# VerdictMesh — Conflict-Aware Bonded Disputes for GenLayer
+# VerdictMesh — Evidence Consensus Primitives for GenLayer
 
-VerdictMesh is a reusable GenLayer Intelligent Contract for adjudicating contested factual claims across independent public web sources with symmetric native-GEN bonds.
+VerdictMesh is a catalog of 12 standalone GenLayer Intelligent Contracts for conflict-aware public-web evidence, provenance, temporal validity, structured extraction, dependency gating, and native-GEN bonded disputes.
 
-The contract deliberately avoids a single opaque "AI decides who wins" prompt. Each source is rendered and classified independently, validators independently reproduce every decisive source judgment, and only then does deterministic logic apply confidence floors, domain diversity, conflict detection, challenge timing, and settlement.
+Sightline focuses on visual evidence. VerdictMesh is deliberately different: its security boundary is **multi-source public-web evidence and disagreement semantics**.
 
-## Core state machine
+## Catalog
 
-`OPEN -> ACTIVE -> RESOLVED -> CHALLENGED -> RESOLVED -> terminal settlement`
+1. `EvidencePanel` — three independent sources with deterministic conflict preservation.
+2. `AsOfEvidencePanel` — only pre-cutoff dated evidence may count.
+3. `ConsensusFieldExtractor` — three-source semantic agreement on one named field.
+4. `NumericConsensusOracle` — numeric extraction plus deterministic spread tolerance.
+5. `ClaimDependencyGraph` — downstream claims remain locked until prerequisites are supported.
+6. `PolicyChangeAttestor` — frozen baseline SHA-256 plus current semantic change detection.
+7. `StatementConflictAttestor` — detects materially conflicting factual statements between sources.
+8. `PrimaryCorroborationGate` — primary evidence must be independently corroborated.
+9. `ProvenanceChainAttestor` — verifies attribution to an origin plus origin support.
+10. `CorrectionStatusAttestor` — CURRENT / CORRECTED / RETRACTED status.
+11. `ExpiringEvidenceAttestor` — TTL-bounded consensus that must be refreshed.
+12. `VerdictMesh` — equal native-GEN bonds, conflict-aware adjudication, challenge, re-resolution, and terminal settlement.
 
-Terminal states:
+See `CONTRACTS.md` for the invariant and failure semantics of each primitive.
 
-- `CLAIMANT_PAID`
-- `RESPONDENT_PAID`
-- `SPLIT_REFUNDED`
-- `CANCELLED`
+## Shared safety design
 
-## Consensus design
+- webpage text is untrusted evidence, never instructions;
+- sources are judged independently where source-level attribution matters;
+- validators independently reproduce decisive semantic fields;
+- low confidence fails closed;
+- duplicate-domain quorum construction is blocked by normalized hostname rules;
+- material contradiction is preserved rather than averaged away;
+- free-form explanatory text is audit-only;
+- deterministic rules gate storage and economic consequences;
+- live webpage bytes are not assumed identical across validators.
 
-Three distinct HTTPS domains form the initial panel:
+## Current verification
 
-- claimant evidence;
-- respondent evidence;
-- a precommitted anchor source.
+VerdictMesh is fully live-verified on Studionet:
 
-Each source receives one bounded vote:
+- **98 / 98 direct tests PASS**
+- **12 / 12 GenVM lints PASS**
+- **12 / 12 contracts deployed and exercised on Studionet**
+- canonical CI: https://github.com/maho0638/verdictmesh-genlayer/actions/runs/36484767096
+- canonical Studionet proof: https://github.com/maho0638/verdictmesh-genlayer/actions/runs/36484767134
+- canonical live commit: `042ce06aa40722bb31130a5baaa5a2d0014b4cc2`
 
-- `SUPPORT`
-- `CONTRADICT`
-- `INSUFFICIENT`
+The live workflow pins SHA-256 for all 12 contract sources before execution.
 
-Confidence below 65 fails closed to `INSUFFICIENT`.
+The flagship bonded lifecycle used real native GEN:
 
-Validator logic independently re-runs all decisive source judgments. Accepted votes then enter deterministic aggregation.
+`open -> equal respondent bond -> 3-source SUPPORTED 3-0 -> settlement locked -> fresh fourth-domain challenge -> 4-source CONFLICTED 3-1 -> SPLIT_REFUNDED`
 
-VerdictMesh uses a conflict circuit breaker rather than ordinary majority voting:
-
-- any SUPPORT + CONTRADICT mixture -> `CONFLICTED`;
-- at least two SUPPORT and no CONTRADICT -> `SUPPORTED`;
-- at least two CONTRADICT and no SUPPORT -> `CONTRADICTED`;
-- otherwise -> `INSUFFICIENT`.
-
-## Economic design
-
-The claimant opens a case with native GEN. The designated respondent must match that stake exactly before the case activates.
-
-Initial settlement is locked for one hour.
-
-During that guaranteed challenge window either party may introduce one fresh fourth-domain source. The entire four-source panel is then re-evaluated.
-
-After challenge re-resolution:
-
-- `SUPPORTED` -> claimant receives the full pot;
-- `CONTRADICTED` -> respondent receives the full pot;
-- `CONFLICTED` / `INSUFFICIENT` -> both parties receive their original stake.
-
-If the respondent never accepts, the claimant can recover the opening stake after 24 hours.
-
-## Verification
-
-Current canonical deterministic verification:
-
-- 28 / 28 direct tests PASS
-- GenVM lint PASS
-- CI: https://github.com/maho0638/verdictmesh-genlayer/actions/runs/36474368384
-
-Canonical live Studionet proof:
-
-- run: https://github.com/maho0638/verdictmesh-genlayer/actions/runs/36473956643
-- live commit: `329e8e8cea5c74128497f980435fb4f9ad5e0508`
-- contract: `0x00a9B05D97043b732Dfb296C7187A1E3F5617CD2`
-- source SHA-256: `b8d6f23422e5a43a263f8f715279080419af0524618bc8f7ac85b95609b95d59`
-
-The live lifecycle used two real GEN bonds, resolved the initial three-source panel `SUPPORTED` 3-0, accepted a fresh contradictory fourth-domain challenge, re-resolved to `CONFLICTED` 3-1, and returned both stakes with terminal status `SPLIT_REFUNDED`.
-
-Full addresses, transactions, decision hashes, and results are pinned in `docs/PROOF_MANIFEST.json`.
+Every live address, transaction hash, source hash, and observed result is pinned in `docs/PROOF_MANIFEST.json`.
 
 ## Reviewer path
 
-1. `docs/ARCHITECTURE.md`
-2. `docs/THREAT_MODEL.md`
-3. `DECISIONS.md`
-4. `docs/PROOF_MANIFEST.json`
-5. `docs/REVIEWER_GUIDE.md`
+1. `CONTRACTS.md`
+2. `docs/ARCHITECTURE.md`
+3. `docs/THREAT_MODEL.md`
+4. `DECISIONS.md`
+5. `docs/PROOF_MANIFEST.json`
+6. `docs/REVIEWER_GUIDE.md`
 
-VerdictMesh does not claim that hostname diversity proves source independence or truth. Its safety objective is narrower: make conflicting or insufficient consensus fail safely instead of forcing an economic winner.
+VerdictMesh does not claim that a webpage is truthful or that hostname diversity proves organizational independence. Its goal is narrower and auditable: expose disagreement, provenance, timing, and confidence explicitly so uncertain evidence fails safely rather than being forced into a winner.

@@ -148,3 +148,67 @@ def test_statement_conflict_attestor_live(default_account):
     print(f"VERDICTMESH_CONFLICT_FACT_A={_field(r,'fact_a')}", flush=True)
     print(f"VERDICTMESH_CONFLICT_FACT_B={_field(r,'fact_b')}", flush=True)
     assert str(_field(r,"verdict")) == "CONFLICTING"
+
+
+@pytest.mark.integration
+def test_primary_corroboration_gate_live(default_account):
+    c = get_contract_factory("PrimaryCorroborationGate").deploy(account=default_account, consensus_max_rotations=4)
+    print(f"VERDICTMESH_CORROBORATION_CONTRACT={c.address}", flush=True)
+    rid = "corroboration-release-v1"
+    tx = c.verify(args=[rid, "The VerdictMesh controlled catalog release code is VM-2026-09.", RAW_A, GITHUB_B, JSDELIVR_C]).transact(
+        consensus_max_rotations=4, wait_interval=10000, wait_retries=90
+    )
+    assert tx_execution_succeeded(tx)
+    print(f"VERDICTMESH_CORROBORATION_TX={tx.get('hash','')}", flush=True)
+    r = c.get_result(args=[rid]).call()
+    print(f"VERDICTMESH_CORROBORATION_VERDICT={_field(r,'verdict')}", flush=True)
+    assert str(_field(r,"verdict")) == "VERIFIED"
+
+@pytest.mark.integration
+def test_provenance_chain_attestor_live(default_account):
+    c = get_contract_factory("ProvenanceChainAttestor").deploy(account=default_account, consensus_max_rotations=4)
+    print(f"VERDICTMESH_PROVENANCE_CONTRACT={c.address}", flush=True)
+    rid = "provenance-release-v1"
+    tx = c.attest(args=[rid, "The VerdictMesh controlled catalog release code is VM-2026-09.", RAW_A, GITHUB_B]).transact(
+        consensus_max_rotations=4, wait_interval=10000, wait_retries=90
+    )
+    assert tx_execution_succeeded(tx)
+    print(f"VERDICTMESH_PROVENANCE_TX={tx.get('hash','')}", flush=True)
+    r = c.get_result(args=[rid]).call()
+    print(f"VERDICTMESH_PROVENANCE_VERDICT={_field(r,'verdict')}", flush=True)
+    print(f"VERDICTMESH_PROVENANCE_ORIGIN={_field(r,'origin_label')}", flush=True)
+    assert str(_field(r,"verdict")) == "PROVENANCE_CONFIRMED"
+    assert bool(_field(r,"primary_attributes_origin")) is True
+
+@pytest.mark.integration
+def test_correction_status_attestor_live(default_account):
+    c = get_contract_factory("CorrectionStatusAttestor").deploy(account=default_account, consensus_max_rotations=4)
+    print(f"VERDICTMESH_CORRECTION_CONTRACT={c.address}", flush=True)
+    rid = "correction-current-v1"
+    statement = "Example access policy allows documentation use."
+    tx = c.attest(args=[rid, statement, RAW_A]).transact(
+        consensus_max_rotations=4, wait_interval=10000, wait_retries=80
+    )
+    assert tx_execution_succeeded(tx)
+    print(f"VERDICTMESH_CORRECTION_TX={tx.get('hash','')}", flush=True)
+    r = c.get_result(args=[rid]).call()
+    print(f"VERDICTMESH_CORRECTION_STATUS={_field(r,'status')}", flush=True)
+    assert str(_field(r,"status")) == "CURRENT"
+
+@pytest.mark.integration
+def test_expiring_evidence_attestor_live(default_account):
+    c = get_contract_factory("ExpiringEvidenceAttestor").deploy(account=default_account, consensus_max_rotations=4)
+    print(f"VERDICTMESH_EXPIRING_CONTRACT={c.address}", flush=True)
+    rid = "expiring-release-v1"
+    tx = c.attest(args=[rid, "The VerdictMesh controlled catalog release code is VM-2026-09.", 3600, RAW_A, GITHUB_B]).transact(
+        consensus_max_rotations=4, wait_interval=10000, wait_retries=80
+    )
+    assert tx_execution_succeeded(tx)
+    print(f"VERDICTMESH_EXPIRING_TX={tx.get('hash','')}", flush=True)
+    r = c.get_result(args=[rid]).call()
+    print(f"VERDICTMESH_EXPIRING_VERDICT={_field(r,'verdict')}", flush=True)
+    print(f"VERDICTMESH_EXPIRING_ROUND={int(_field(r,'round'))}", flush=True)
+    print(f"VERDICTMESH_EXPIRING_VALID_UNTIL={int(_field(r,'valid_until'))}", flush=True)
+    assert str(_field(r,"verdict")) == "SUPPORTED"
+    assert int(_field(r,"round")) == 1
+    assert c.is_active(args=[rid]).call() is True

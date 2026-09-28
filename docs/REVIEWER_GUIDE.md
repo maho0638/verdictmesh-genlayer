@@ -1,11 +1,12 @@
 # VerdictMesh Reviewer Guide
 
-## What to inspect first
+## Fast review
 
-1. `docs/ARCHITECTURE.md` — state machine, source panel, challenge, settlement.
-2. `docs/THREAT_MODEL.md` — explicit attack model and limitations.
-3. `DECISIONS.md` — why conflict beats simple majority and why live page bytes are not treated as immutable evidence.
-4. `docs/PROOF_MANIFEST.json` — canonical CI and Studionet evidence once live verification is complete.
+1. Read `docs/ARCHITECTURE.md` for the state machine and deterministic settlement rules.
+2. Read `docs/THREAT_MODEL.md` for explicit safety boundaries and limitations.
+3. Read `DECISIONS.md` for the rationale behind per-source classification and the conflict circuit breaker.
+4. Inspect `docs/PROOF_MANIFEST.json` for canonical run IDs, source hash, contract address, transaction hashes, and decision hashes.
+5. Inspect the live contract on GenLayer Explorer.
 
 ## Direct verification
 
@@ -15,24 +16,66 @@ pytest tests/direct -v
 genvm-lint check contracts/verdict_mesh.py
 ```
 
-The direct suite is expected to cover:
+Canonical CI:
 
-- equal GEN bonds;
+https://github.com/maho0638/verdictmesh-genlayer/actions/runs/36474368384
+
+Expected result:
+
+- 28 tests PASS
+- GenVM lint PASS
+
+The direct suite covers:
+
+- equal claimant/respondent GEN bonds;
 - role authorization;
-- independent-domain enforcement;
-- support / contradiction / conflict / insufficient aggregation;
+- HTTPS and normalized independent-domain enforcement;
+- SUPPORT / CONTRADICT / CONFLICTED / INSUFFICIENT aggregation;
 - low-confidence fail-closed behavior;
-- validator disagreement rejection;
-- guaranteed challenge-window settlement lock;
-- fresh-domain challenge requirement;
-- full four-source re-resolution;
+- adversarial validator disagreement rejection;
+- one-hour initial settlement lock;
+- challenge expiry;
+- fresh fourth-domain requirement;
+- one-shot challenge semantics;
+- complete four-source re-resolution;
 - claimant and respondent winner payouts;
 - neutral split refunds;
+- incompatible settlement-path rejection;
 - unaccepted-case recovery;
-- duplicate-case and terminal-state protections.
+- duplicate case protection;
+- deterministic decision-hash change after challenge.
 
 ## Live Studionet verification
 
-The canonical live workflow will be pinned here after it succeeds.
+Canonical run:
 
-The live test is designed to exercise real GEN escrow and a challenge that changes the evidence set before deterministic settlement.
+https://github.com/maho0638/verdictmesh-genlayer/actions/runs/36473956643
+
+Contract:
+
+https://explorer-studio.genlayer.com/address/0x00a9B05D97043b732Dfb296C7187A1E3F5617CD2
+
+Source SHA-256:
+
+`b8d6f23422e5a43a263f8f715279080419af0524618bc8f7ac85b95609b95d59`
+
+Reproduce:
+
+```bash
+gltest tests/integration/test_verdictmesh_studionet.py -v -s --network studionet
+```
+
+Canonical live behavior:
+
+- open native-GEN bonded case;
+- respondent matches stake;
+- resolve 3 independent public sources;
+- observe SUPPORTED 3-0;
+- confirm settlement remains locked;
+- add a fresh contradictory fourth-domain challenge source;
+- re-run all 4 source judgments;
+- observe CONFLICTED 3-1;
+- settle through split refund;
+- verify terminal SPLIT_REFUNDED state.
+
+The challenge fixture is intentionally controlled and clearly labeled as a test fixture. Its purpose is to prove that material counterevidence changes the consensus path and economic outcome rather than being ignored as metadata.

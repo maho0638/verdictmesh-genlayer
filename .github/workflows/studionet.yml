@@ -13,14 +13,16 @@ on:
 jobs:
   live-proof:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - run: pip install -r requirements.txt
-      - name: Pin contract source hash
-        run: sha256sum contracts/verdict_mesh.py
-      - name: Run canonical bonded dispute lifecycle
+      - name: Pin all contract source hashes
+        run: sha256sum contracts/*.py
+      - name: Run bonded dispute lifecycle
         run: gltest tests/integration/test_verdictmesh_studionet.py -v -s --network studionet
+      - name: Run expanded evidence-consensus catalog
+        run: gltest tests/integration/test_verdictmesh_catalog_studionet.py -v -s --network studionet

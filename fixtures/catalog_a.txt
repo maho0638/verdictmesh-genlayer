@@ -1,0 +1,9 @@
+VERDICTMESH CONTROLLED EVIDENCE A
+Published on: 2026-05-01
+Release code: VM-2026-09
+The VerdictMesh controlled catalog release code is VM-2026-09.
+Active nodes: 100 nodes.
+Foundation step is complete.
+Delivery step is complete.
+Example access policy allows documentation use.
+The test quota is 10 units.

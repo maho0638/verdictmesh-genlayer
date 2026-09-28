@@ -396,3 +396,117 @@ def test_cancel_is_blocked_while_acceptance_window_open(
     direct_vm.sender = direct_alice
     with direct_vm.expect_revert("Acceptance window is still open"):
         c.cancel_unaccepted("case-1")
+
+
+def test_rejects_non_https_claimant_evidence(
+    direct_vm, direct_deploy, direct_alice, direct_bob
+):
+    c = direct_deploy("contracts/verdict_mesh.py")
+    direct_vm.sender = direct_alice
+    direct_vm.value = STAKE
+    with direct_vm.expect_revert("valid HTTPS URLs"):
+        c.open_case(
+            "bad-http",
+            _address(direct_bob),
+            "A sufficiently descriptive factual claim.",
+            "http://claimant.example/evidence",
+            ANCHOR_URL,
+        )
+
+
+def test_www_and_trailing_dot_cannot_fake_domain_diversity(
+    direct_vm, direct_deploy, direct_alice, direct_bob
+):
+    c = direct_deploy("contracts/verdict_mesh.py")
+    direct_vm.sender = direct_alice
+    direct_vm.value = STAKE
+    c.open_case(
+        "normalized-domain",
+        _address(direct_bob),
+        "A sufficiently descriptive factual claim.",
+        "https://example.com/a",
+        ANCHOR_URL,
+    )
+    direct_vm.value = STAKE
+    direct_vm.sender = direct_bob
+    with direct_vm.expect_revert("independent domains"):
+        c.accept_case("normalized-domain", "https://www.example.com./b")
+
+
+def test_challenge_after_deadline_is_rejected(
+    direct_vm, direct_deploy, direct_alice, direct_bob
+):
+    c = direct_deploy("contracts/verdict_mesh.py")
+    create_active_case(direct_vm, c, direct_alice, direct_bob)
+    mock_panel(direct_vm)
+    c.resolve("case-1")
+    direct_vm.warp((datetime.now(timezone.utc) + timedelta(hours=2)).isoformat())
+    direct_vm.sender = direct_bob
+    with direct_vm.expect_revert("Challenge window has closed"):
+        c.challenge("case-1", CHALLENGE_URL)
+
+
+def test_second_challenge_is_rejected(
+    direct_vm, direct_deploy, direct_alice, direct_bob
+):
+    c = direct_deploy("contracts/verdict_mesh.py")
+    create_active_case(direct_vm, c, direct_alice, direct_bob)
+    mock_panel(direct_vm)
+    c.resolve("case-1")
+    direct_vm.sender = direct_bob
+    c.challenge("case-1", CHALLENGE_URL)
+    mock_panel(direct_vm, "SUPPORT", "SUPPORT", "SUPPORT", "SUPPORT")
+    c.resolve_challenge("case-1")
+    direct_vm.sender = direct_alice
+    with direct_vm.expect_revert("no challengeable initial resolution"):
+        c.challenge("case-1", "https://another.example/evidence")
+
+
+def test_split_settlement_rejects_decisive_verdict(
+    direct_vm, direct_deploy, direct_alice, direct_bob
+):
+    c = direct_deploy("contracts/verdict_mesh.py")
+    create_active_case(direct_vm, c, direct_alice, direct_bob)
+    mock_panel(direct_vm)
+    c.resolve("case-1")
+    direct_vm.sender = direct_alice
+    c.challenge("case-1", CHALLENGE_URL)
+    mock_panel(direct_vm, "SUPPORT", "SUPPORT", "SUPPORT", "SUPPORT")
+    c.resolve_challenge("case-1")
+    with direct_vm.expect_revert("Decisive verdict requires winner settlement"):
+        c.settle_split("case-1")
+
+
+def test_winner_settlement_rejects_conflicted_verdict(
+    direct_vm, direct_deploy, direct_alice, direct_bob
+):
+    c = direct_deploy("contracts/verdict_mesh.py")
+    create_active_case(direct_vm, c, direct_alice, direct_bob)
+    mock_panel(direct_vm)
+    c.resolve("case-1")
+    direct_vm.sender = direct_bob
+    c.challenge("case-1", CHALLENGE_URL)
+    mock_panel(direct_vm, "SUPPORT", "SUPPORT", "SUPPORT", "CONTRADICT")
+    c.resolve_challenge("case-1")
+    with direct_vm.expect_revert("Non-decisive verdict requires split settlement"):
+        c.settle_winner("case-1")
+
+
+def test_decision_hash_changes_after_fresh_challenge_resolution(
+    direct_vm, direct_deploy, direct_alice, direct_bob
+):
+    c = direct_deploy("contracts/verdict_mesh.py")
+    create_active_case(direct_vm, c, direct_alice, direct_bob)
+    mock_panel(direct_vm)
+    c.resolve("case-1")
+    first_hash = c.get_case("case-1").decision_hash
+
+    direct_vm.sender = direct_bob
+    c.challenge("case-1", CHALLENGE_URL)
+    mock_panel(direct_vm, "SUPPORT", "SUPPORT", "SUPPORT", "CONTRADICT")
+    c.resolve_challenge("case-1")
+    second_hash = c.get_case("case-1").decision_hash
+
+    assert len(first_hash) == 64
+    assert len(second_hash) == 64
+    assert first_hash != second_hash

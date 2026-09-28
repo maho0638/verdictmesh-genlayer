@@ -1,60 +1,196 @@
 {
-  "schema": "verdictmesh-proof-v1",
+  "schema": "verdictmesh-proof-v2",
   "status": "LIVE_VERIFIED",
+  "scope": {
+    "contribution": "VerdictMesh — Evidence Consensus Primitives for GenLayer",
+    "contracts": 12,
+    "network": "Studionet"
+  },
   "direct_tests": {
-    "count": 28,
-    "status": "PASS"
+    "count": 98,
+    "status": "PASS",
+    "command": "pytest tests/direct -v"
   },
   "lint": {
-    "contract": "contracts/verdict_mesh.py",
+    "contracts_checked": 12,
+    "contracts_passed": 12,
     "status": "PASS",
-    "checks": 3
+    "command": "for f in contracts/*.py; do genvm-lint check \"$f\"; done"
   },
   "canonical_ci_run": {
-    "run_id": 36474368384,
-    "url": "https://github.com/maho0638/verdictmesh-genlayer/actions/runs/36474368384",
+    "run_id": 36484767096,
+    "url": "https://github.com/maho0638/verdictmesh-genlayer/actions/runs/36484767096",
+    "commit": "042ce06aa40722bb31130a5baaa5a2d0014b4cc2",
     "status": "SUCCESS"
   },
   "studionet": {
     "canonical_run": {
-      "run_id": 36473956643,
-      "url": "https://github.com/maho0638/verdictmesh-genlayer/actions/runs/36473956643",
-      "commit": "329e8e8cea5c74128497f980435fb4f9ad5e0508",
-      "status": "SUCCESS"
+      "run_id": 36484767134,
+      "url": "https://github.com/maho0638/verdictmesh-genlayer/actions/runs/36484767134",
+      "commit": "042ce06aa40722bb31130a5baaa5a2d0014b4cc2",
+      "status": "SUCCESS",
+      "bonded_lifecycle": "1/1 PASS",
+      "expanded_catalog": "11/11 PASS",
+      "total": "12/12 live deploy + transact + read/assertion PASS"
     },
-    "source_sha256": "b8d6f23422e5a43a263f8f715279080419af0524618bc8f7ac85b95609b95d59",
-    "contract": {
-      "address": "0x00a9B05D97043b732Dfb296C7187A1E3F5617CD2",
-      "explorer": "https://explorer-studio.genlayer.com/address/0x00a9B05D97043b732Dfb296C7187A1E3F5617CD2"
+    "source_hashes_sha256": {
+      "as_of_evidence_panel": "60915b3409c8d3ef274bfe2287c27174494c1673076737d454fa1f31e5044749",
+      "claim_dependency_graph": "ab999e700e6858bd91db9ab84ccec804d06b66488e073bdf45a323bab1c1ee2c",
+      "consensus_field_extractor": "f52edd60391716c175e688c636c9d73c93853187bb912dd17a2654dbe8fb0555",
+      "correction_status_attestor": "9a779f7fb52be260454c1936932f033991ce078c79f9bcf6fcff1c0c5cce3ea1",
+      "evidence_panel": "0bb6fb17efb91dcbed136d7304866fd8be7874dbcda8e1df7adc6ac82de4bdaf",
+      "expiring_evidence_attestor": "d91e4ed57039d5d7abdebfa867c97ea47e0b3ad87eeb3d3bcc533a9b38517cb1",
+      "numeric_consensus_oracle": "f0a7b7e6b8a325cb2aa22d1f43938d7cf1c374e24f61670e5d02e4dcb02fd284",
+      "policy_change_attestor": "1eb00601bf18faa654fc1b4237e3665a9031c84e97e16fbaffe6be9d56892e2c",
+      "primary_corroboration_gate": "5eabd7d8b1fac55e4b3285bc9d211f50ebb4c162cf88ee3055c4f825bca288e0",
+      "provenance_chain_attestor": "5512d4fc0155534581dbdf7f50a9e442c4f59e34a3927865e72769487f5e7c9c",
+      "statement_conflict_attestor": "530376e0cd7e00fb5ae682e0da3e05b1b6ef81ba929e99ad588e648db321de13",
+      "verdict_mesh": "b8d6f23422e5a43a263f8f715279080419af0524618bc8f7ac85b95609b95d59"
     },
-    "participants": {
-      "claimant": "0xE9c230054c9983615eeD4Edb49e148088A65F252",
-      "respondent": "0x2952e3e9515a3d6bA051131B7fCC7D5beE23D02f"
-    },
-    "transactions": {
-      "open_case": "0x010fe69191eb13f9656cfdc6957831384d0b4c1ccf3a97f0d66e751bdc5cc1ef",
-      "accept_case": "0xf6dba87db336b3f3785cf5e67827af7c1a7277eaa180ad9f404f8da829c7e204",
-      "initial_resolve": "0xd11e58ee206fd8a82b0f480990897520cfa2459fca364d14404402b18db93145",
-      "challenge": "0xbfef531b64401c9511bdcd69d7dc573ab0bf6238449722d56d0716c1c92d41ea",
-      "challenge_reresolve": "0x785ec1b38b0825d269a46f78dfd28cc43db3a3b529337d1b394d08b5d81bcd26",
-      "split_refund": "0x6072ebb94a8670c0dc886e12ccbe35b5f3c3d586db05735764ec1f271e85ec30"
-    },
-    "initial_result": {
-      "verdict": "SUPPORTED",
-      "support_count": 3,
-      "contradict_count": 0,
-      "decision_hash": "9d7aea22dd3833ebca2c2209b69a77ea025e5c1babec100e351c175f3cd21169",
-      "challenge_deadline": 1790628141
-    },
-    "challenge_result": {
-      "verdict": "CONFLICTED",
-      "support_count": 3,
-      "contradict_count": 1,
-      "resolution_round": 2,
-      "challenge_count": 1,
-      "decision_hash": "677b260622cd42ed31af21ba1a6c8f8ed6f199690ee3a1a77a12eec60830c5a6"
-    },
-    "final_status": "SPLIT_REFUNDED"
+    "contracts": {
+      "verdict_mesh": {
+        "address": "0xe3f1E70344F58C3280542dBdC6a4Bfc533C5e6B0",
+        "explorer": "https://explorer-studio.genlayer.com/address/0xe3f1E70344F58C3280542dBdC6a4Bfc533C5e6B0",
+        "transactions": {
+          "open_case": "0x00d2c59865f8388926267d6ddfd749a7fe287848fb71b7ed400d3c37d4de412b",
+          "accept_case": "0xc66b2bc5c0a0c0af50e6d045df1061499276aedae58bd4d29bab398c40ea0790",
+          "initial_resolve": "0x61259f872507ca1a211a781e9d6307bc7a2c8f188de2b2a691b8a2473b13ca93",
+          "challenge": "0xf6fb1c371afcccef8e5878e0b592a4c4b529e75039048405ddd272101039a05b",
+          "challenge_reresolve": "0x1d3a67eab5d137da760cf73ba383c2a9e9785041939103f3d1f71d3a64a276a5",
+          "split_refund": "0xe9ff5e9882498f2e3e5fb6c76df82ff67bf37707f6a75bcb3cbf01dba90c96ca"
+        },
+        "initial_result": {
+          "verdict": "SUPPORTED",
+          "support_count": 3,
+          "contradict_count": 0,
+          "decision_hash": "9d7aea22dd3833ebca2c2209b69a77ea025e5c1babec100e351c175f3cd21169"
+        },
+        "final_result": {
+          "verdict": "CONFLICTED",
+          "support_count": 3,
+          "contradict_count": 1,
+          "resolution_round": 2,
+          "challenge_count": 1,
+          "decision_hash": "677b260622cd42ed31af21ba1a6c8f8ed6f199690ee3a1a77a12eec60830c5a6",
+          "status": "SPLIT_REFUNDED"
+        }
+      },
+      "evidence_panel": {
+        "address": "0xf815e91781eF4b9E92606cb1ceE822E18F2f8535",
+        "transaction": "0x49db685d5982297ed71cc391ec8c683e993c77c4b2f0c3c494f3348c864be269",
+        "result": {
+          "verdict": "SUPPORTED",
+          "support_count": 3
+        }
+      },
+      "as_of_evidence_panel": {
+        "address": "0x5079036cd7a726a9940Cf2D29F7E0271a7d784d8",
+        "transaction": "0xbd4022ee0087c8f992fd5179a78fd90391617db627eccdcae163e2af86e5bb87",
+        "result": {
+          "verdict": "SUPPORTED",
+          "eligible_count": 2,
+          "date_a": "2026-05-01",
+          "date_c": "2027-01-01"
+        }
+      },
+      "consensus_field_extractor": {
+        "address": "0xed16001d41A7cC2a4709101F233e1433c9Acf4b8",
+        "transaction": "0xc254cb4d81e8a19d826d5d721a97264494c9f1c22f9216b7ecc2985d21fe30fd",
+        "result": {
+          "verdict": "AGREED",
+          "value": "vm-2026-09",
+          "agreement_count": 3
+        }
+      },
+      "numeric_consensus_oracle": {
+        "address": "0xFD8cC2eDb3389371Ab73ba53D838877d97CFf6c7",
+        "transaction": "0xcfdb91cb9519e4ef13c82716fd01c77ca5bf2bd4528524f1a6f77e6ab1682c19",
+        "result": {
+          "verdict": "CONSENSUS",
+          "value": 100,
+          "spread": 2
+        }
+      },
+      "claim_dependency_graph": {
+        "address": "0x3a78b9c6728c2098F09265fa0F3Dae43c6389DB9",
+        "transactions": {
+          "create_root": "0x3decfa36b278226f05d25ed582ce677466509373e4354d52a973c3daaa6b9edd",
+          "create_child": "0x1d088aee57ce51fe3c7011f887a079280ce82c0ff0a936ac10dce7c123d2112c",
+          "resolve_root": "0x3e63ed8db7f3ef99b914af0fa5ca70317f9a3a44816de8091263da9da1fda18f",
+          "resolve_child": "0x971d9d4bec300366f38a0813162e38708f93588601b38c39d75f08ec0f252e00"
+        },
+        "result": {
+          "root": "SUPPORTED",
+          "child": "SUPPORTED"
+        }
+      },
+      "policy_change_attestor": {
+        "address": "0x1451861D70ea74c316E268F26453C0a255C720b8",
+        "transaction": "0x8595095f38a18a1a9b11c166384d9065510828f1ec5e6d1458458b50aeea6f09",
+        "result": {
+          "verdict": "UNCHANGED",
+          "baseline_hash": "658af954b00dc39ecec55cbe228ed08ebf1c6dd37616e12738779044247a2f6e"
+        }
+      },
+      "statement_conflict_attestor": {
+        "address": "0xF150E2f0130d35A0d71734c909aDb6650d66eCB6",
+        "transaction": "0x1e5dd1fd85f97b8d6a83e853194c12f321d52f62e24a5f84b6ee61995d325784",
+        "result": {
+          "verdict": "CONFLICTING",
+          "fact_a": "The test quota is 10 units.",
+          "fact_b": "The test quota is 20 units."
+        }
+      },
+      "primary_corroboration_gate": {
+        "address": "0xE89044a97ec2DFEfD2218F76315de29C3DF7e132",
+        "transaction": "0xee7dc7c97c7ca5b1f9c89741ebfb9d61900bdc50e3a19d58944fa89e95037e90",
+        "result": {
+          "verdict": "VERIFIED"
+        }
+      },
+      "provenance_chain_attestor": {
+        "address": "0x290773ceEC47DDb61Dfd57CF01Ecc461eA6857E2",
+        "transaction": "0x69dd8cfd73fe4357833776214818a9dd14842a2fb54f62c8a5d08ace6bb59043",
+        "result": {
+          "verdict": "PROVENANCE_CONFIRMED",
+          "origin": "VerdictMesh Origin Record"
+        }
+      },
+      "correction_status_attestor": {
+        "address": "0xA0206D6Ca30499f28e8aD902Ded470b73876c9dF",
+        "transaction": "0x2ad634e6374cde8c021c207388a56a328e814ff5565ef2f95966cafab92ad0e2",
+        "result": {
+          "status": "CURRENT"
+        }
+      },
+      "expiring_evidence_attestor": {
+        "address": "0x9FCF060eae58E9778d2fBBF8B3ce5C1f1D1bAa5E",
+        "transaction": "0xff8ff5cb6fb93ddbc3622288a11ee8cc710ccfc940040e7fccf502ed4ab8db6e",
+        "result": {
+          "verdict": "SUPPORTED",
+          "round": 1,
+          "valid_until": 1790634286
+        }
+      }
+    }
   },
+  "guarantees_demonstrated": [
+    "12 distinct evidence-consensus state machines",
+    "per-source bounded semantic judgments",
+    "validator re-execution of decisive fields",
+    "low-confidence fail-closed behavior",
+    "normalized independent-domain constraints",
+    "material-conflict preservation",
+    "temporal cutoff exclusion",
+    "field-value agreement and numeric tolerance",
+    "claim dependency gating",
+    "baseline SHA-256 binding",
+    "provenance and correction-state checks",
+    "expiring attestations with refresh semantics",
+    "symmetric native-GEN bonded disputes",
+    "one-hour challenge settlement lock",
+    "fresh fourth-domain re-resolution",
+    "safe split refund and terminal settlement"
+  ],
   "submission_ready": true
 }

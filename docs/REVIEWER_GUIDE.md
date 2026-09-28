@@ -1,81 +1,65 @@
 # VerdictMesh Reviewer Guide
 
+VerdictMesh is one Intelligent Contracts contribution with 12 distinct evidence-consensus primitives.
+
 ## Fast review
 
-1. Read `docs/ARCHITECTURE.md` for the state machine and deterministic settlement rules.
-2. Read `docs/THREAT_MODEL.md` for explicit safety boundaries and limitations.
-3. Read `DECISIONS.md` for the rationale behind per-source classification and the conflict circuit breaker.
-4. Inspect `docs/PROOF_MANIFEST.json` for canonical run IDs, source hash, contract address, transaction hashes, and decision hashes.
-5. Inspect the live contract on GenLayer Explorer.
+1. Read `CONTRACTS.md` for all 12 mechanisms and their deterministic invariants.
+2. Read `docs/ARCHITECTURE.md` for the shared nondeterministic/deterministic boundary.
+3. Read `docs/THREAT_MODEL.md` and `DECISIONS.md`.
+4. Inspect `docs/PROOF_MANIFEST.json`.
+5. Inspect the canonical CI and full Studionet proof runs.
 
 ## Direct verification
 
 ```bash
 python -m pip install -r requirements.txt
 pytest tests/direct -v
-genvm-lint check contracts/verdict_mesh.py
+for f in contracts/*.py; do genvm-lint check "$f"; done
 ```
 
 Canonical CI:
 
-https://github.com/maho0638/verdictmesh-genlayer/actions/runs/36474368384
+https://github.com/maho0638/verdictmesh-genlayer/actions/runs/36484767096
 
 Expected result:
 
-- 28 tests PASS
-- GenVM lint PASS
+- **98 tests PASS**
+- **12 / 12 contracts pass GenVM lint**
 
-The direct suite covers:
-
-- equal claimant/respondent GEN bonds;
-- role authorization;
-- HTTPS and normalized independent-domain enforcement;
-- SUPPORT / CONTRADICT / CONFLICTED / INSUFFICIENT aggregation;
-- low-confidence fail-closed behavior;
-- adversarial validator disagreement rejection;
-- one-hour initial settlement lock;
-- challenge expiry;
-- fresh fourth-domain requirement;
-- one-shot challenge semantics;
-- complete four-source re-resolution;
-- claimant and respondent winner payouts;
-- neutral split refunds;
-- incompatible settlement-path rejection;
-- unaccepted-case recovery;
-- duplicate case protection;
-- deterministic decision-hash change after challenge.
+The direct suite includes confidence fail-closed tests, independent-domain invariants, adversarial validator disagreement, temporal cutoff rules, semantic field disagreement, numeric divergence, dependency locking, baseline hash binding, provenance/correction semantics, TTL refresh, challenge timing, incompatible settlement-path rejection, and terminal settlement protection.
 
 ## Live Studionet verification
 
 Canonical run:
 
-https://github.com/maho0638/verdictmesh-genlayer/actions/runs/36473956643
+https://github.com/maho0638/verdictmesh-genlayer/actions/runs/36484767134
 
-Contract:
+Canonical commit:
 
-https://explorer-studio.genlayer.com/address/0x00a9B05D97043b732Dfb296C7187A1E3F5617CD2
-
-Source SHA-256:
-
-`b8d6f23422e5a43a263f8f715279080419af0524618bc8f7ac85b95609b95d59`
+`042ce06aa40722bb31130a5baaa5a2d0014b4cc2`
 
 Reproduce:
 
 ```bash
 gltest tests/integration/test_verdictmesh_studionet.py -v -s --network studionet
+gltest tests/integration/test_verdictmesh_catalog_studionet.py -v -s --network studionet
 ```
 
-Canonical live behavior:
+Expected result:
 
-- open native-GEN bonded case;
-- respondent matches stake;
-- resolve 3 independent public sources;
-- observe SUPPORTED 3-0;
-- confirm settlement remains locked;
-- add a fresh contradictory fourth-domain challenge source;
-- re-run all 4 source judgments;
-- observe CONFLICTED 3-1;
-- settle through split refund;
-- verify terminal SPLIT_REFUNDED state.
+- bonded dispute lifecycle: **1 / 1 PASS**
+- expanded catalog: **11 / 11 PASS**
+- total: **12 / 12 live contracts**
 
-The challenge fixture is intentionally controlled and clearly labeled as a test fixture. Its purpose is to prove that material counterevidence changes the consensus path and economic outcome rather than being ignored as metadata.
+Flagship contract:
+
+https://explorer-studio.genlayer.com/address/0xe3f1E70344F58C3280542dBdC6a4Bfc533C5e6B0
+
+Flagship live path:
+
+`open -> accept equal GEN bond -> SUPPORTED 3-0 -> settlement lock -> fresh challenge -> CONFLICTED 3-1 -> SPLIT_REFUNDED`
+
+The expanded suite separately deploys and exercises all other 11 contracts.
+
+All live addresses, transaction hashes, source SHA-256 hashes, and observed outputs are in `docs/PROOF_MANIFEST.json`.

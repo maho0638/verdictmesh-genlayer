@@ -1,4 +1,4 @@
-# VerdictMesh — Conflict-Aware Bonded Disputes for GenLayer
+# VerdictMesh — Evidence Consensus Primitives for GenLayer
 
 ## Submission status
 
@@ -6,129 +6,130 @@ READY FOR FINAL PORTAL REVIEW
 
 ## Summary
 
-VerdictMesh is a native-GEN bonded factual-dispute primitive. A claimant and designated respondent post equal stakes, contribute independent public evidence, and let GenLayer validators classify each source separately before deterministic conflict-aware settlement.
+VerdictMesh is a catalog of 12 reusable GenLayer Intelligent Contracts for conflict-aware public-web evidence.
 
-This is not a generic "AI decides X" wrapper. The economic result is derived from a structured state machine, independent per-source consensus, hostname diversity, confidence floors, a material-conflict circuit breaker, a guaranteed challenge window, fresh counterevidence, full re-resolution, and terminal settlement rules.
+The suite covers independent source panels, historical "as-of" evidence, structured field consensus, numeric tolerance, prerequisite claim graphs, policy-change detection, direct statement-conflict detection, primary-source corroboration, provenance chains, correction/retraction status, expiring evidence, and a symmetric native-GEN bonded dispute lifecycle.
+
+VerdictMesh is intentionally distinct from Sightline: Sightline evaluates visual evidence; VerdictMesh focuses on **live public-web evidence, source disagreement, temporal eligibility, provenance, and economic adjudication**.
 
 ## Why GenLayer is necessary
 
-The decisive question is semantic: does each live public webpage support, contradict, or fail to establish the frozen claim?
+Traditional deterministic smart contracts cannot fetch arbitrary live webpages and semantically determine whether a source supports a claim, contradicts another source, attributes a claim to an origin, represents a correction, or expresses a value within a semantic field.
 
-A traditional deterministic contract cannot read and semantically interpret arbitrary public webpages. VerdictMesh uses GenLayer web access and LLM-capable nondeterministic execution for the bounded source judgments, then moves all economic consequences back into deterministic contract logic.
+VerdictMesh uses GenLayer nondeterministic web + LLM execution only for bounded observations. Validators independently reproduce the decisive fields. Deterministic contract code then performs quorum, conflict, cutoff, tolerance, dependency, expiry, challenge, and settlement logic.
 
-## Consensus model
+## What makes the suite distinct
 
-Initial evidence comes from three distinct normalized hostnames:
+This is not one prompt copied 12 times.
 
-- claimant source;
-- respondent source;
-- precommitted anchor source.
+The contracts have different state models and deterministic invariants:
 
-Each source is rendered and judged independently.
+- source-vote conflict circuit breaking;
+- pre-cutoff temporal eligibility;
+- semantic field equality;
+- numeric spread tolerance;
+- prerequisite graph locking;
+- frozen-baseline change detection;
+- pairwise statement conflict classification;
+- primary-source plus corroborator requirements;
+- provenance attribution plus origin verification;
+- current/corrected/retracted state;
+- TTL expiry and refresh rounds;
+- equal-GEN bonded dispute settlement with challenge.
 
-Allowed source votes:
+## Security model
 
-- SUPPORT
-- CONTRADICT
-- INSUFFICIENT
-
-Confidence below 65 becomes INSUFFICIENT.
-
-Validators independently rerun each decisive source judgment and must agree on the normalized verdict while confidence remains within the fixed tolerance.
-
-The contract never lets free-form rationale directly control funds.
-
-## Conflict circuit breaker
-
-VerdictMesh intentionally rejects ordinary majority logic for bonded disputes.
-
-If at least one source SUPPORTS and another CONTRADICTS, the outcome is CONFLICTED even if the numerical majority is 2-to-1 or 3-to-1.
-
-A winner is only economically actionable when decisive sources align without an opposite decisive vote.
-
-## Challenge and settlement
-
-Initial decisions cannot settle for one hour.
-
-During that guaranteed window either party may submit exactly one new source from a fresh fourth hostname.
-
-The challenged case performs a complete four-source re-resolution.
-
-Settlement:
-
-- SUPPORTED -> claimant receives both stakes.
-- CONTRADICTED -> respondent receives both stakes.
-- CONFLICTED / INSUFFICIENT -> each party receives its original stake.
-- unaccepted cases -> claimant can recover after 24 hours.
-
-Terminal state prevents double settlement.
+- source text is explicitly treated as untrusted evidence;
+- decisive outputs are bounded labels or values;
+- low confidence fails closed;
+- validators independently re-run decisive semantic judgments;
+- normalized hostname checks prevent trivial duplicate-domain quorum construction;
+- contradictory evidence is preserved rather than hidden by simple majority;
+- free-form text does not directly control funds;
+- live webpage byte equality is not assumed;
+- caller-frozen baselines can be SHA-256 bound exactly;
+- economic settlement happens only after deterministic state checks;
+- terminal states block double settlement.
 
 ## Verification
 
 Canonical CI:
 
-https://github.com/maho0638/verdictmesh-genlayer/actions/runs/36474368384
+https://github.com/maho0638/verdictmesh-genlayer/actions/runs/36484767096
 
 Result:
 
-- 28 / 28 direct tests PASS
-- GenVM lint PASS
+- 98 / 98 direct tests PASS
+- 12 / 12 GenVM lints PASS
 
-Canonical Studionet proof:
+Canonical full Studionet proof:
 
-https://github.com/maho0638/verdictmesh-genlayer/actions/runs/36473956643
+https://github.com/maho0638/verdictmesh-genlayer/actions/runs/36484767134
 
-Live contract:
+Live commit:
 
-https://explorer-studio.genlayer.com/address/0x00a9B05D97043b732Dfb296C7187A1E3F5617CD2
+`042ce06aa40722bb31130a5baaa5a2d0014b4cc2`
 
-Live source SHA-256:
+Result:
 
-`b8d6f23422e5a43a263f8f715279080419af0524618bc8f7ac85b95609b95d59`
+- flagship bonded lifecycle: 1 / 1 PASS
+- expanded evidence catalog: 11 / 11 PASS
+- total: 12 / 12 contracts live
 
-Canonical live lifecycle:
+The workflow pins SHA-256 hashes of every contract source before live execution.
 
-1. claimant opened case with native GEN stake;
-2. respondent matched the GEN stake;
-3. three-source resolution -> SUPPORTED, 3 support / 0 contradict;
-4. settlement remained locked;
-5. respondent submitted a fresh fourth-domain contradictory source;
-6. complete re-resolution -> CONFLICTED, 3 support / 1 contradict;
-7. deterministic split settlement returned both stakes;
-8. terminal status -> SPLIT_REFUNDED.
+## Flagship native-GEN lifecycle
 
-All transaction hashes and decision hashes are in `docs/PROOF_MANIFEST.json`.
+The live VerdictMesh dispute demonstrates:
+
+1. claimant opens with native GEN;
+2. respondent matches the stake exactly;
+3. three independent sources resolve SUPPORTED, 3-0;
+4. settlement remains locked for one hour;
+5. respondent supplies fresh fourth-domain counterevidence;
+6. the full four-source panel is re-evaluated;
+7. result becomes CONFLICTED, 3-1;
+8. deterministic split settlement returns both principals;
+9. final state is SPLIT_REFUNDED.
+
+Live flagship contract:
+
+https://explorer-studio.genlayer.com/address/0xe3f1E70344F58C3280542dBdC6a4Bfc533C5e6B0
+
+## Expanded live mechanisms
+
+The same canonical run also proves:
+
+- EvidencePanel -> SUPPORTED 3-0
+- AsOfEvidencePanel -> post-cutoff evidence excluded
+- ConsensusFieldExtractor -> AGREED 3-of-3
+- NumericConsensusOracle -> CONSENSUS with spread 2
+- ClaimDependencyGraph -> supported prerequisite unlocks supported child
+- PolicyChangeAttestor -> frozen baseline remains UNCHANGED
+- StatementConflictAttestor -> conflicting facts are surfaced
+- PrimaryCorroborationGate -> VERIFIED
+- ProvenanceChainAttestor -> PROVENANCE_CONFIRMED
+- CorrectionStatusAttestor -> CURRENT
+- ExpiringEvidenceAttestor -> SUPPORTED with bounded valid-until time
+
+Addresses, transactions, source hashes, decision hashes, and observed outputs:
+
+`docs/PROOF_MANIFEST.json`
 
 ## Reproduction
 
 ```bash
 python -m pip install -r requirements.txt
 pytest tests/direct -v
-genvm-lint check contracts/verdict_mesh.py
+for f in contracts/*.py; do genvm-lint check "$f"; done
 gltest tests/integration/test_verdictmesh_studionet.py -v -s --network studionet
+gltest tests/integration/test_verdictmesh_catalog_studionet.py -v -s --network studionet
 ```
-
-## Security properties demonstrated
-
-- independent source classification;
-- substantive validator re-execution;
-- low-confidence fail closed;
-- normalized three-domain initial diversity;
-- fresh-domain challenge requirement;
-- prompt-injection-aware evidence handling;
-- conflict-over-majority circuit breaker;
-- one-hour settlement lock;
-- challenge forces fresh consensus;
-- equal native-GEN economic exposure;
-- safe split refund for conflict/insufficiency;
-- unaccepted-case recovery;
-- terminal double-settlement protection;
-- deterministic decision receipt hash.
 
 ## Explicit limitations
 
-VerdictMesh does not prove source truth, source ownership independence, or immutable webpage bytes.
+VerdictMesh does not prove that public sources are truthful, organizationally independent, immutable, or free from coordinated misinformation.
 
-Hostname diversity blocks trivial duplicate-domain quorum construction but is not a proof that organizations are independent.
+Hostname diversity is a resistance mechanism against trivial duplicate-source voting, not proof of ownership independence.
 
-Because validators fetch live webpages independently, consensus is over bounded semantic judgments rather than byte-identical page snapshots.
+Validators fetch live webpages independently, so consensus is over bounded semantic judgments rather than byte-identical page snapshots.

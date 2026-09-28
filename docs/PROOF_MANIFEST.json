@@ -1,15 +1,60 @@
 {
   "schema": "verdictmesh-proof-v1",
-  "status": "DEVELOPMENT_ONLY",
-  "direct_tests": null,
-  "lint": null,
-  "canonical_ci_run": null,
-  "studionet": {
-    "canonical_run": null,
-    "contract": null,
-    "transactions": null,
-    "result": null,
-    "source_sha256": null
+  "status": "LIVE_VERIFIED",
+  "direct_tests": {
+    "count": 28,
+    "status": "PASS"
   },
-  "submission_ready": false
+  "lint": {
+    "contract": "contracts/verdict_mesh.py",
+    "status": "PASS",
+    "checks": 3
+  },
+  "canonical_ci_run": {
+    "run_id": 36474368384,
+    "url": "https://github.com/maho0638/verdictmesh-genlayer/actions/runs/36474368384",
+    "status": "SUCCESS"
+  },
+  "studionet": {
+    "canonical_run": {
+      "run_id": 36473956643,
+      "url": "https://github.com/maho0638/verdictmesh-genlayer/actions/runs/36473956643",
+      "commit": "329e8e8cea5c74128497f980435fb4f9ad5e0508",
+      "status": "SUCCESS"
+    },
+    "source_sha256": "b8d6f23422e5a43a263f8f715279080419af0524618bc8f7ac85b95609b95d59",
+    "contract": {
+      "address": "0x00a9B05D97043b732Dfb296C7187A1E3F5617CD2",
+      "explorer": "https://explorer-studio.genlayer.com/address/0x00a9B05D97043b732Dfb296C7187A1E3F5617CD2"
+    },
+    "participants": {
+      "claimant": "0xE9c230054c9983615eeD4Edb49e148088A65F252",
+      "respondent": "0x2952e3e9515a3d6bA051131B7fCC7D5beE23D02f"
+    },
+    "transactions": {
+      "open_case": "0x010fe69191eb13f9656cfdc6957831384d0b4c1ccf3a97f0d66e751bdc5cc1ef",
+      "accept_case": "0xf6dba87db336b3f3785cf5e67827af7c1a7277eaa180ad9f404f8da829c7e204",
+      "initial_resolve": "0xd11e58ee206fd8a82b0f480990897520cfa2459fca364d14404402b18db93145",
+      "challenge": "0xbfef531b64401c9511bdcd69d7dc573ab0bf6238449722d56d0716c1c92d41ea",
+      "challenge_reresolve": "0x785ec1b38b0825d269a46f78dfd28cc43db3a3b529337d1b394d08b5d81bcd26",
+      "split_refund": "0x6072ebb94a8670c0dc886e12ccbe35b5f3c3d586db05735764ec1f271e85ec30"
+    },
+    "initial_result": {
+      "verdict": "SUPPORTED",
+      "support_count": 3,
+      "contradict_count": 0,
+      "decision_hash": "9d7aea22dd3833ebca2c2209b69a77ea025e5c1babec100e351c175f3cd21169",
+      "challenge_deadline": 1790628141
+    },
+    "challenge_result": {
+      "verdict": "CONFLICTED",
+      "support_count": 3,
+      "contradict_count": 1,
+      "resolution_round": 2,
+      "challenge_count": 1,
+      "decision_hash": "677b260622cd42ed31af21ba1a6c8f8ed6f199690ee3a1a77a12eec60830c5a6"
+    },
+    "final_status": "SPLIT_REFUNDED"
+  },
+  "submission_ready": true
 }

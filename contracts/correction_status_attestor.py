@@ -66,7 +66,6 @@ Return JSON only:
                 lead = self._normalize(leader_result.calldata)
                 return (
                     lead["status"] == check["status"]
-                    and lead["correction"] == check["correction"]
                     and abs(int(lead["confidence"]) - int(check["confidence"])) <= 15
                 )
             except Exception:

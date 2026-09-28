@@ -106,7 +106,6 @@ Return JSON only:
                 lead = leader_result.calldata
                 return (
                     bool(lead.get("attributes_origin", False)) == bool(check["attributes_origin"])
-                    and str(lead.get("origin_label", "")) == str(check["origin_label"])
                     and str(lead.get("origin_verdict", "")) == str(check["origin_verdict"])
                     and abs(int(lead.get("primary_confidence", 0)) - int(check["primary_confidence"])) <= 15
                     and abs(int(lead.get("origin_confidence", 0)) - int(check["origin_confidence"])) <= 15

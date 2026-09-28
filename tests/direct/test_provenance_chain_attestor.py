@@ -33,3 +33,10 @@ def test_validator_rejects_origin_flip(direct_vm,direct_deploy,direct_alice):
     c=direct_deploy("contracts/provenance_chain_attestor.py"); direct_vm.sender=direct_alice
     setup(direct_vm); c.attest("pr5","Claim.",PRIMARY,ORIGIN)
     setup(direct_vm,True,"CONTRADICT"); assert direct_vm.run_validator() is False
+
+
+def test_validator_allows_origin_label_paraphrase(direct_vm,direct_deploy,direct_alice):
+    c=direct_deploy("contracts/provenance_chain_attestor.py"); direct_vm.sender=direct_alice
+    setup(direct_vm,True,"SUPPORT",90,90,"Origin Record"); c.attest("pr6","Claim.",PRIMARY,ORIGIN)
+    setup(direct_vm,True,"SUPPORT",90,90,"The Origin Record")
+    assert direct_vm.run_validator() is True

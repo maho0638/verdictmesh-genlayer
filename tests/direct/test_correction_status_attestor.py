@@ -32,3 +32,10 @@ def test_validator_rejects_status_flip(direct_vm,direct_deploy,direct_alice):
     c=direct_deploy("contracts/correction_status_attestor.py"); direct_vm.sender=direct_alice
     setup(direct_vm,"CURRENT"); c.attest("cs6","Statement.",URL)
     setup(direct_vm,"RETRACTED"); assert direct_vm.run_validator() is False
+
+
+def test_validator_allows_nondecisive_correction_paraphrase(direct_vm,direct_deploy,direct_alice):
+    c=direct_deploy("contracts/correction_status_attestor.py"); direct_vm.sender=direct_alice
+    setup(direct_vm,"CORRECTED",90,"Replacement A."); c.attest("cs7","Statement.",URL)
+    setup(direct_vm,"CORRECTED",90,"Equivalent replacement wording.")
+    assert direct_vm.run_validator() is True

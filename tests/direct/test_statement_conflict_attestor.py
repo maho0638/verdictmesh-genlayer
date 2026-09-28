@@ -34,3 +34,10 @@ def test_validator_rejects_conflict_flip(direct_vm,direct_deploy,direct_alice):
     c=direct_deploy("contracts/statement_conflict_attestor.py"); direct_vm.sender=direct_alice
     result(direct_vm,"CONSISTENT"); c.compare("s6","topic",A,B)
     result(direct_vm,"CONFLICTING",90,"A says 10.","B says 20."); assert direct_vm.run_validator() is False
+
+
+def test_validator_allows_nondecisive_fact_paraphrase(direct_vm,direct_deploy,direct_alice):
+    c=direct_deploy("contracts/statement_conflict_attestor.py"); direct_vm.sender=direct_alice
+    result(direct_vm,"CONFLICTING",90,"A says ten.","B says twenty."); c.compare("s7","topic",A,B)
+    result(direct_vm,"CONFLICTING",90,"Source A reports 10.","Source B reports 20.")
+    assert direct_vm.run_validator() is True

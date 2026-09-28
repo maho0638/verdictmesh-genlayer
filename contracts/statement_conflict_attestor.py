@@ -87,8 +87,6 @@ Return JSON only:
                 lead = self._normalize(leader_result.calldata)
                 return (
                     lead["verdict"] == check["verdict"]
-                    and lead["fact_a"] == check["fact_a"]
-                    and lead["fact_b"] == check["fact_b"]
                     and abs(int(lead["confidence"]) - int(check["confidence"])) <= 15
                 )
             except Exception:

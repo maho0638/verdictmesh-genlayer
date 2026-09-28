@@ -35,3 +35,10 @@ def test_validator_rejects_semantic_flip(direct_vm,direct_deploy,direct_alice):
     c=direct_deploy("contracts/policy_change_attestor.py"); direct_vm.sender=direct_alice
     result(direct_vm,"UNCHANGED"); c.attest("pc6","The policy allows X.",URL)
     result(direct_vm,"CHANGED"); assert direct_vm.run_validator() is False
+
+
+def test_validator_allows_nondecisive_excerpt_paraphrase(direct_vm,direct_deploy,direct_alice):
+    c=direct_deploy("contracts/policy_change_attestor.py"); direct_vm.sender=direct_alice
+    result(direct_vm,"UNCHANGED",90,"Version A wording."); c.attest("pc7","The policy allows X.",URL)
+    result(direct_vm,"UNCHANGED",90,"Equivalent version B wording.")
+    assert direct_vm.run_validator() is True

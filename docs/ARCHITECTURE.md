@@ -1,8 +1,42 @@
 # VerdictMesh Architecture
 
-VerdictMesh is a single deep Intelligent Contract primitive for symmetric, evidence-backed factual disputes.
+VerdictMesh is an evidence-consensus primitive suite for GenLayer. It contains 12 standalone Intelligent Contracts built around one common principle: nondeterministic web/LLM execution produces only bounded observations; deterministic contract logic decides whether those observations are sufficient to mutate durable or economic state.
 
-## State machine
+See `CONTRACTS.md` for the per-contract catalog.
+
+## Shared evidence pipeline
+
+Most primitives use this pattern:
+
+1. normalize and validate HTTPS inputs;
+2. enforce independent hostnames where a multi-source invariant requires them;
+3. render each source inside GenLayer nondeterministic execution;
+4. classify or extract one narrow field from each source;
+5. normalize malformed values and fail low confidence closed;
+6. have validators independently reproduce the decisive semantic fields;
+7. deterministically aggregate accepted fields;
+8. store only bounded outcomes and compact audit data.
+
+The suite intentionally avoids one monolithic "read all pages and decide" prompt where source-level disagreement would be invisible.
+
+## Deterministic disagreement semantics
+
+Different primitives use different deterministic rules:
+
+- `EvidencePanel`: conflict circuit breaker over SUPPORT / CONTRADICT / INSUFFICIENT.
+- `AsOfEvidencePanel`: date eligibility before vote aggregation.
+- `ConsensusFieldExtractor`: semantic field-value agreement.
+- `NumericConsensusOracle`: bounded numeric spread.
+- `ClaimDependencyGraph`: prerequisite gating.
+- `PrimaryCorroborationGate`: primary-source requirement plus independent corroboration.
+- `ProvenanceChainAttestor`: attribution link plus origin support.
+- `ExpiringEvidenceAttestor`: TTL and refresh rounds.
+
+This is why the repository is a catalog of distinct state machines rather than repeated prompt wrappers.
+
+## VerdictMesh bonded dispute state machine
+
+The flagship economic primitive uses:
 
 `OPEN -> ACTIVE -> RESOLVED -> CHALLENGED -> RESOLVED -> terminal settlement`
 
@@ -13,89 +47,37 @@ Terminal states:
 - `SPLIT_REFUNDED`
 - `CANCELLED`
 
-## Evidence roles
+The claimant opens with native GEN and precommits claimant evidence plus an anchor source. The designated respondent must match the stake exactly and provide a third independent domain.
 
-A case begins with:
+Initial resolution classifies the three sources independently.
 
-- claimant evidence URL;
-- a precommitted anchor URL;
-- a designated respondent;
-- a native-GEN claimant stake.
+Deterministic aggregation:
 
-The respondent sees the claim, anchor, and claimant source before accepting. Acceptance requires:
-
-- an equal GEN stake;
-- a respondent evidence URL;
-- a third independent hostname.
-
-This creates a symmetric bonded case with three distinct web domains before any semantic resolution.
-
-## Per-source consensus
-
-VerdictMesh deliberately does not concatenate all sources into one prompt.
-
-For each source independently:
-
-1. render the HTTPS page inside a nondeterministic block;
-2. ask for exactly one bounded vote: `SUPPORT`, `CONTRADICT`, or `INSUFFICIENT`;
-3. normalize malformed labels;
-4. fail confidence below 65 to `INSUFFICIENT`;
-5. have validators independently rerun every decisive source judgment;
-6. require the same normalized vote and confidence within a fixed tolerance.
-
-Only accepted structured votes leave the nondeterministic boundary.
-
-## Deterministic conflict circuit breaker
-
-Initial three-source resolution:
-
-- any mix of SUPPORT and CONTRADICT -> `CONFLICTED`;
-- at least 2 SUPPORT and 0 CONTRADICT -> `SUPPORTED`;
-- at least 2 CONTRADICT and 0 SUPPORT -> `CONTRADICTED`;
+- any SUPPORT + CONTRADICT mixture -> `CONFLICTED`;
+- at least 2 SUPPORT and no CONTRADICT -> `SUPPORTED`;
+- at least 2 CONTRADICT and no SUPPORT -> `CONTRADICTED`;
 - otherwise -> `INSUFFICIENT`.
 
-This is intentionally stricter than ordinary majority voting. A material counter-source prevents a winner payout.
+Every initial resolution opens a one-hour challenge window. Settlement is locked during that period. Either party can introduce exactly one fresh fourth-domain source and force a complete four-source re-resolution.
 
-## Guaranteed challenge window
+Settlement after the challenge path or after an unchallenged window:
 
-Every initial resolution opens a one-hour challenge window.
+- `SUPPORTED` -> claimant receives the full pot;
+- `CONTRADICTED` -> respondent receives the full pot;
+- `CONFLICTED` / `INSUFFICIENT` -> both parties receive their original stake.
 
-During that window:
+## Live-page identity model
 
-- no winner payout;
-- no split refund;
-- either party may provide one fresh HTTPS source;
-- the challenge hostname must differ from all three initial hostnames.
+Caller-supplied frozen text such as a policy baseline can be SHA-256 bound exactly.
 
-The challenged case is then fully re-evaluated across all four sources.
+Live webpage bytes are different: validators fetch independently and pages can vary. VerdictMesh therefore does not pretend that a live-page byte hash is a cross-validator identity primitive. Consensus is over bounded semantic results, while stored hashes such as the flagship decision hash commit to frozen case inputs and normalized accepted outputs.
 
-Four-source resolution requires at least three aligned decisive votes with no opposite decisive vote. Any SUPPORT/CONTRADICT mixture remains `CONFLICTED`.
+## Verification boundary
 
-After the fresh re-resolution, settlement may proceed immediately.
+Canonical current verification demonstrates:
 
-## Economic settlement
-
-Both parties post equal native-GEN stakes.
-
-- `SUPPORTED` -> claimant receives the full pot.
-- `CONTRADICTED` -> respondent receives the full pot.
-- `CONFLICTED` or `INSUFFICIENT` -> each party receives its original stake back.
-
-An unaccepted case can be cancelled after 24 hours and returns the claimant stake.
-
-Settlement is terminal and cannot be repeated.
-
-## Audit receipt
-
-Each resolution stores:
-
-- source URLs;
-- normalized source votes;
-- confidence values;
-- vote counts;
-- resolution round;
-- challenge metadata;
-- policy version;
-- a deterministic SHA-256 decision hash over the frozen case inputs and normalized verdict.
-
-The decision hash binds the on-chain receipt to the adjudication inputs and accepted vote structure. It is not presented as a hash of live webpage bytes, because independently rendered webpages may legitimately differ across validators.
+- 98 direct tests;
+- 12 / 12 GenVM lints;
+- all 12 contracts deployed and exercised on Studionet;
+- a real native-GEN bonded dispute lifecycle with challenge and split refund;
+- source hashes pinned before live execution.
